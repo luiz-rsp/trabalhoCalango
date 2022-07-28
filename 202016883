@@ -1,0 +1,183 @@
+algoritmo TrabalhoCalango;
+// Síntese: programa direcionado ao técnico de um time de Counter-Strike para analise de dados da semana
+//  Objetivo: divulgar ao usuário o rendimento individual e coletivo de um time de Counter-Strike
+//  Entrada : nomes dos jogadores, vitórias, derrotas, abates, mortes
+//  Saída   : saldo de vitórias, listar jogadores por ordem de rendimento.
+
+
+principal
+	// Declarações
+	inteiro i, opcao, cont, vit[3], abates[5], mortes[5], jogos;
+	texto nomes[5],nome;
+
+	// Instruções
+
+	opcao=0;
+	jogos=0;
+
+	//De antemão vamos ler os dados da equipe para que as nossas operações possam acontecer
+	escreval("Para começar, preencha todos os dados da equipe");
+	escreval("Digite o número de partidas realizadas: ");
+	leia (jogos);
+
+	limpaTela();
+	//times de Counter-Strike tem 5 jogadores
+	para (i de 0 ate 4 passo 1) faca
+		escreval("Digite o nome do jogador ", i+1, ": ");
+		leia (nomes[i]);
+		escreval("Digite o número de abates do jogador ", i+1, ": ");
+		leia (abates[i]);
+		escreval("Digite o número de mortes do jogador ", i+1, ": ");
+		leia (mortes[i]);
+		limpaTela();
+	fimPara
+	faca
+		cont=0;
+		escreval("O número de partidas é ", jogos);
+		para (i de 0 ate 2 passo 1) faca
+			escreval("Digite o numero de vitorias no mapa ", i+1, ": ");
+			leia (vit[i]);
+			cont=cont+vit[i];
+		fimPara
+		se (cont>jogos) entao
+			escreval("Valores inválidos, tente outra vez! ");
+		fimSe
+		limpaTela();
+	enquanto (cont>jogos);
+
+	//o enquanto permitirá a revisitaçãos dos dados sem necessariamente ter que fazer a releitura de tudo
+	enquanto (opcao!=5) faca
+		//procedimento de impressão do menu
+		menu();
+		leia (opcao);
+		//o escolha caso é uma boa opção quando se tem um menu
+		escolha(opcao)
+		caso 1
+			limpaTela();
+			Rabates(abates,mortes,nomes);
+			//procedimento de listagem do rendimento individual dos jogadores do maior para o menor
+			interrompa;
+		caso 2
+			limpaTela();
+			escreval("O mapa com maior índice de vitórias é o mapa: ", mapaMaior(vit));
+			//funcao que retorna o mapa com maior número de vitórias
+			interrompa;
+		caso 3
+			limpaTela();
+			escreval("O mapa com menor índice de vitórias é o mapa: ", mapaMenor(vit));
+			//funcao que retorna o mapa com menor número de vitórias
+			interrompa;
+		caso 4
+			limpaTela();
+			procuraJogador(nomes,abates,mortes);
+			//procedimento para mostrar as informações do jogador procurando pelo nome
+			interrompa;
+		caso 5
+		limpaTela();
+			escreval("Obrigado por utilizar o programa!");
+		interrompa;
+		outroCaso
+			limpaTela();
+			escreval("Esssa opção nao existe!");
+		fimEscolha
+	fimEnquanto
+
+
+fimPrincipal
+
+procedimento menu()
+	escreval(" ");
+	escreval("---------------------- MENU -------------------- ");
+	escreval("1 - Rendimento dos jogadores em abates por morte");
+	escreval("2 - Mapa com maior índice de vitórias");
+	escreval("3 - Mapa com menor índice de vitórias");
+	escreval("4 - Procurar por jogador");
+	escreval("5 - Sair");
+	escreval("------------------------------------------------");
+	escreval("	Digite o número da opção desejada ");
+fimProcedimento
+
+procedimento Rabates(inteiro abates[], inteiro mortes[],texto nomes[])
+	//declarações
+	inteiro i,j, somaA, somaM;
+	real rendimento[5], temp;
+	texto tempor;
+
+	//instruções
+	somaA=0;
+	somaM=0;
+	para (i de 0 ate 4 passo 1) faca
+		rendimento[i]=abates[i]/mortes[i];
+	fimPara
+	para (i de 0 ate 4 passo 1) faca
+		para (j de i+1 ate 4 passo 1) faca
+			se (rendimento[j]>rendimento[i]) entao
+				temp=rendimento[i];
+				tempor=nomes[i];
+				rendimento[i]=rendimento[j];
+				nomes[i]=nomes[j];
+				rendimento[j]=temp;
+				nomes[j]=tempor;
+			fimSe
+		fimPara
+	fimPara	
+	//técnica utilizada: bubble sort
+
+	escreval ("Esta é a lista dos rendimentos:");
+	para (i de 0 ate 4 passo 1) faca
+		escreval(i+1," - Jogador ", nomes[i], " | rendimento: ", rendimento[i]::2," abates por morte.");
+	fimPara
+
+fimProcedimento
+
+funcao inteiro mapaMaior(inteiro vit[])
+	//declarações
+	inteiro mapaX, i, temp;
+
+	//instruções
+	mapaX=vit[0];
+	para (i de 0 ate 2 passo 1) faca
+		se (vit[i]>mapaX) entao
+			mapaX=vit[i];
+		fimSe
+	fimPara
+			retorna mapaX;
+	//comparação simples entre as posições do vetor para mostrar o mapa com maior número de vitórias
+fimFuncao
+
+funcao inteiro mapaMenor(inteiro vit[])
+	//declarações
+	inteiro mapaX2, i, temp;
+
+	//instruções
+	mapaX2=vit[0];
+	para (i de 0 ate 2 passo 1) faca
+		se (vit[i]<mapaX2) entao
+			mapaX2=vit[i];
+		fimSe
+	fimPara
+	retorna mapaX2;
+	//comparação simples entre as posições do vetor para mostrar o mapa com menor número de vitórias
+fimFuncao
+
+procedimento procuraJogador(texto nomes[], inteiro abates[], inteiro mortes[])
+	//declarações
+	inteiro i, cont;
+	texto nome;
+
+	//instruções
+	escreval("Digite o nome do jogador a ser procurado: ");
+	leia (nome);
+	cont=0;
+	para (i de 0 ate 4 passo 1) faca
+		se (comparaTexto(nome,nomes[i])==0) entao
+		//utilização da funcao comparaTexto para vasculhar pelo vetor o nome a ser encontrado
+			escreval("O jogador ", nomes[i], " tem número de abates = ", abates[i], " e número de mortes = ",mortes[i]);
+			cont=cont+1;
+		fimSe
+	fimPara	
+	se (cont<1) entao
+		escreval("Jogador não encontrado!");
+	fimSe	
+
+fimProcedimento
